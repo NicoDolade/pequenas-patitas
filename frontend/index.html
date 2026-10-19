@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pequeñas Patitas — Catálogo y Mapa de Adopciones</title>
+  <!-- Hoja de estilos de Leaflet desde CDN unpkg -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <div class="contenedor">
+    <header class="encabezado">
+      <h1>🐾 Pequeñas Patitas</h1>
+      <p class="subtitulo">Red solidaria de adopción y tránsito responsable de mascotas</p>
+    </header>
+
+    <!-- Sección de Registro / Formulario -->
+    <section class="tarjeta">
+      <h2>Ingresar Mascota en Adopción</h2>
+      <form id="formAlta">
+        <div class="formulario-grid">
+          <div class="campo">
+            <label for="campoNombre">Nombre del perrito / gatito:</label>
+            <input type="text" id="campoNombre" placeholder="Ej: Milo, Luna..." required>
+          </div>
+          <div class="campo">
+            <label for="campoContacto">Email / Teléfono de contacto:</label>
+            <input type="text" id="campoContacto" placeholder="Ej: adopciones@refugio.org" required>
+          </div>
+          <div class="campo">
+            <label for="campoCiudad">Ciudad del hogar de tránsito:</label>
+            <input type="text" id="campoCiudad" placeholder="Ej: Tres Arroyos, Tandil, Bahía Blanca">
+          </div>
+        </div>
+        <button type="submit" class="btn-primario" id="btnGuardar">Publicar en Catálogo</button>
+      </form>
+      <div id="mensaje" class="mensaje" role="alert"></div>
+    </section>
+
+    <!-- Mapa Interactivo Leaflet -->
+    <section class="tarjeta">
+      <h2>📍 Mapa de Hogares de Tránsito</h2>
+      <p class="ayuda-mapa">Hacé clic sobre cualquier marcador para ver los datos del refugio y coordinar una visita.</p>
+      <div id="mapa"></div>
+    </section>
+
+    <!-- Catálogo / Tabla de Mascotas -->
+    <section class="tarjeta">
+      <h2>Mascotas Esperando un Hogar</h2>
+      <div class="tabla-contenedor">
+        <table class="tabla-mascotas">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Contacto</th>
+              <th>Ciudad</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="cuerpoTabla">
+            <!-- Se carga dinámicamente con JavaScript -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="pie">
+      <p>Pequeñas Patitas &copy; 2026 — Trabajo Práctico Integrador N.º 1</p>
+      <p>Tecnicatura Universitaria en Programación — UTN Tres Arroyos | Grupo 21: Nico & Zoe Bellusci</p>
+    </footer>
+  </div>
+
+  <!-- Biblioteca Leaflet JS desde CDN unpkg -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
