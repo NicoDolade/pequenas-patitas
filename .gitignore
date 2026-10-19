@@ -1,0 +1,7 @@
+# Archivos de log local que no deben ir al repositorio
+api/avisos.log
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
