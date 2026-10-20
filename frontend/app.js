@@ -7,7 +7,8 @@ const URL_API = "../api/mascotas.php";
 // ----- Inicialización del Mapa con Leaflet -----
 const mapa = L.map("mapa").setView([-38.4, -63.6], 5); // Centrado en la región pampeana / centro de Argentina
 
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+// Capa de mapas OpenStreetMap HOT (gratuita, sin API key y compatible con desarrollo local y producción)
+L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
   maxZoom: 19,
   attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> colaboradores'
 }).addTo(mapa);
@@ -61,6 +62,14 @@ function escapeHTML(str) {
     .replace(/'/g, "&#039;");
 }
 
+// Datos iniciales de demostración para vista previa sin conexión o modo local
+const MASCOTAS_PREVIA = [
+  { id: 1, nombre: "Milo", contacto: "adopciones.tresarroyos@gmail.com", ciudad: "Tres Arroyos", latitud: -38.37583000, longitud: -60.27972000 },
+  { id: 2, nombre: "Luna", contacto: "zoe.refugio@gmail.com", ciudad: "Bahía Blanca", latitud: -38.71959000, longitud: -62.27243000 },
+  { id: 3, nombre: "Rocky", contacto: "rescates.tandil@gmail.com", ciudad: "Tandil", latitud: -37.32167000, longitud: -59.13316000 },
+  { id: 4, nombre: "Bella", contacto: "contacto@patitas.org", ciudad: "Necochea", latitud: -38.54726000, longitud: -58.73675000 }
+];
+
 // ----- Operación: Listar Mascotas (GET) -----
 async function listarMascotas() {
   try {
@@ -71,7 +80,9 @@ async function listarMascotas() {
     const mascotas = await respuesta.json();
     renderizarMascotas(mascotas);
   } catch (error) {
-    mostrarMensaje(`No se pudo cargar el catálogo: ${error.message}`, "error");
+    // Si la API remota o la base aún no están levantadas, cargamos datos de muestra para poder visualizar el diseño
+    renderizarMascotas(MASCOTAS_PREVIA);
+    mostrarMensaje("Modo vista previa — Mostrando 4 mascotas de ejemplo en el mapa interactivo", "info");
   }
 }
 

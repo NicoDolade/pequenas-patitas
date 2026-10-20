@@ -1,7 +1,7 @@
 # 🐾 Pequeñas Patitas — Red Solidaria de Adopción de Mascotas
 
 Trabajo Práctico Integrador N.º 1 — **Aplicaciones Móviles y Cloud Computing**  
-Tecnicatura Universitaria en Programación (TUP) — UTN Aula Tres Arroyos  
+Tecnicatura Universitaria en Programación (TUP) — UPSO Sede Tres Arroyos  
 Docentes: Eduardo Mónaco · Heber Alonso  
 
 ---
@@ -12,7 +12,7 @@ Docentes: Eduardo Mónaco · Heber Alonso
 - **Tema del Proyecto:** Plataforma web fullstack orientada a la publicación, consulta y geolocalización de mascotas (perros y gatos) en adopción responsable y hogares de tránsito. Permite a los interesados explorar el catálogo de animales y visualizar en un mapa interactivo la ubicación de cada refugio u hogar de tránsito para coordinar visitas.
 - **Grupo:** N.º 21
 - **Integrantes:**
-  - Nico
+  - Nicolás Doladé
   - Zoe Bellusci
 - **URL Pública de la Aplicación (Frontend):** `https://pequenas-patitas-production.up.railway.app/` *(o la URL provista por Railway)*
 - **URL Pública de la API REST:** `https://pequenas-patitas-production.up.railway.app/api/mascotas.php`
@@ -133,7 +133,7 @@ El sistema integra **tres servicios en la nube**, desacoplados en el módulo `ap
 
 ## 8. Aportes de los Integrantes (Evidencia de Participación)
 
-- **Nico:**
+- **Nicolás Doladé:**
   - Configuración del entorno base, `Dockerfile` y scripts de inicialización SQL (`sql/base.sql`).
   - Implementación de la arquitectura de conexión segura PDO y lectura de entorno (`api/config.php` y `api/conexion.php`).
   - Desarrollo de la interfaz de usuario en el frontend (`frontend/index.html` y `frontend/estilos.css`) y ensamblado de la capa cartográfica interactiva de Leaflet (`frontend/app.js`).

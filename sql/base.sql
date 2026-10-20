@@ -1,6 +1,6 @@
 -- Base de datos: pequenas_patitas
 -- Trabajo Práctico Integrador N.º 1 - Grupo 21
--- Integrantes: Nico y Zoe Bellusci
+-- Integrantes: Nicolás Doladé y Zoe Bellusci
 
 CREATE TABLE IF NOT EXISTS mascotas (
     id INT AUTO_INCREMENT PRIMARY KEY,
