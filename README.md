@@ -14,8 +14,8 @@ Docentes: Eduardo Mónaco · Heber Alonso
 - **Integrantes:**
   - Nicolás Doladé
   - Zoe Bellusci
-- **URL Pública de la Aplicación (Frontend):** `https://pequenas-patitas-production.up.railway.app/` *(o la URL provista por Railway)*
-- **URL Pública de la API REST:** `https://pequenas-patitas-production.up.railway.app/api/mascotas.php`
+- **URL Pública de la Aplicación (Frontend):** `http://pequenaspatitas.infinityfreeapp.com/`
+- **URL Pública de la API REST:** `http://pequenaspatitas.infinityfreeapp.com/api/mascotas.php`
 
 ---
 
@@ -102,7 +102,8 @@ El sistema integra **tres servicios en la nube**, desacoplados en el módulo `ap
 
 ## 6. Despliegue en la Nube
 
-- **Proveedor Cloud Elegido:** **Railway**
+- **Proveedor Cloud en Producción:** **InfinityFree** (siguiendo la contingencia oficial prevista por la cátedra en la Semana 10 debido al incidente global de Railway del 20/10/2026 reportado en status.railway.com).
+- **Compatibilidad PaaS:** Incluye `Dockerfile` listo para aprovisionamiento directo en **Railway** o Render.
 - **Modelo de Servicio (NIST):** **PaaS (Platform as a Service)**.
   - *Justificación:* Permite desplegar aplicaciones web completas abstrayendo la administración del sistema operativo subyacente y las actualizaciones de parches de seguridad. Proporciona aprovisionamiento automatizado mediante contenedores Docker, gestión nativa de certificados SSL (HTTPS obligatorio), base de datos MySQL administrada y configuración directa de variables de entorno desde el panel de control.
 - **Pasos para volver a desplegar:**
