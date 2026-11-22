@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.PequenasPatitas" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#204E42</item>
+        <item name="colorPrimaryDark">#183C33</item>
+        <item name="colorAccent">#204E42</item>
+        <item name="android:windowBackground">#F7F8F4</item>
+    </style>
+</resources>

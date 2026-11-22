@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Pequeñas Patitas</string>
+    <string name="titulo_listado">Mascotas en adopción</string>
+    <string name="titulo_alta">Registrar mascota</string>
+    <string name="titulo_detalle">Detalle de la mascota</string>
+    <string name="recargar">Actualizar</string>
+    <string name="reintentar">Reintentar</string>
+    <string name="volver">Volver</string>
+    <string name="guardar">Guardar</string>
+    <string name="nombre">Nombre</string>
+    <string name="contacto">Contacto</string>
+    <string name="ciudad_opcional">Ciudad (opcional)</string>
+    <string name="detalle_contacto">Contacto: %1$s</string>
+    <string name="detalle_ciudad">Ciudad: %1$s</string>
+    <string name="sin_ciudad">Sin ciudad indicada</string>
+    <string name="lista_vacia">Todavía no hay mascotas registradas.</string>
+    <string name="cargando">Cargando…</string>
+    <string name="alta_en_progreso">Guardando mascota…</string>
+    <string name="alta_confirmada">Mascota registrada.</string>
+    <string name="nombre_requerido">Ingresá el nombre de la mascota.</string>
+    <string name="contacto_requerido">Ingresá un dato de contacto.</string>
+    <string name="error_id">No se recibió un identificador válido.</string>
+    <string name="error_red">No se pudo conectar con la API. Revisá tu conexión e intentá de nuevo.</string>
+    <string name="error_red_alta">No se pudo confirmar el alta. Revisá el listado antes de volver a guardar.</string>
+    <string name="error_respuesta">La API devolvió una respuesta inesperada.</string>
+    <string name="error_http">La API respondió con el código %1$d.</string>
+    <string name="error_mensaje_api">La API respondió: %1$s</string>
+</resources>

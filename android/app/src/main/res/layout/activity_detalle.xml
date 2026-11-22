@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/contenido"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/titulo_detalle"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <ProgressBar
+            android:id="@+id/progreso"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/cargando"
+            android:indeterminate="true"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/estado"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/detalle_nombre"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/detalle_contacto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/detalle_ciudad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/reintentar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/reintentar"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/volver"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/volver" />
+    </LinearLayout>
+</ScrollView>
