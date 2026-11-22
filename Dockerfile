@@ -12,3 +12,6 @@ COPY . /var/www/html/
 
 # Para que avisos.log (modo simulación) se pueda escribir sin restricciones de permisos
 RUN chown -R www-data:www-data /var/www/html/api
+
+# mod_php usa prefork. Quitamos otros MPM al arrancar el contenedor.
+CMD ["sh", "-c", "a2dismod mpm_event mpm_worker && a2enmod mpm_prefork && apache2ctl -t && exec apache2-foreground"]
