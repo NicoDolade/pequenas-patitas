@@ -57,6 +57,7 @@ La API responde exclusivamente con el encabezado `Content-Type: application/json
 | **PUT** | `/api/mascotas.php?id={id}` | Parámetro URL `id` y cuerpo JSON con campos a modificar:<br>`{ "nombre": string, "contacto": string, "ciudad": string }` | Objeto JSON actualizado | `200 OK`<br>`400 Bad Request` (datos inválidos)<br>`404 Not Found` (recurso inexistente)<br>`422 Unprocessable Entity` (nueva ciudad inválida) |
 | **DELETE** | `/api/mascotas.php?id={id}` | Parámetro URL `id` (entero) | Sin contenido (cuerpo vacío) | `204 No Content`<br>`400 Bad Request`<br>`404 Not Found` |
 | **OPTIONS** | `/api/mascotas.php` | Ninguno (solicitud preflight de CORS) | Encabezados de autorización de métodos | `200 OK` |
+| **Otros métodos** | `/api/mascotas.php` | — | Objeto JSON con `error` y encabezado `Allow` con los métodos admitidos | `405 Method Not Allowed` |
 
 ---
 

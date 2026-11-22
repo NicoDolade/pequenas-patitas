@@ -2,9 +2,6 @@
 // api/mascotas.php — API REST para gestión de mascotas en adopción (Pequeñas Patitas)
 // Cumple con verbos HTTP estándar, códigos de estado REST y degradación elegante.
 
-require_once "conexion.php";
-require_once "servicios.php";
-
 // Orígenes permitidos para peticiones cruzadas (CORS) en desarrollo
 $origen = $_SERVER["HTTP_ORIGIN"] ?? "";
 $origenesPermitidos = [
@@ -18,17 +15,29 @@ if (in_array($origen, $origenesPermitidos, true)) {
     header("Vary: Origin");
 }
 
+$metodo = $_SERVER["REQUEST_METHOD"];
+$metodosPermitidos = ["GET", "POST", "PUT", "DELETE", "OPTIONS"];
+$encabezadoMetodos = implode(", ", $metodosPermitidos);
+
 header("Content-Type: application/json; charset=utf-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: $encabezadoMetodos");
 header("Access-Control-Allow-Headers: Content-Type");
 
 // Petición Preflight (CORS)
-if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+if ($metodo === "OPTIONS") {
     http_response_code(200);
     exit();
 }
 
-$metodo = $_SERVER["REQUEST_METHOD"];
+if (!in_array($metodo, $metodosPermitidos, true)) {
+    header("Allow: $encabezadoMetodos");
+    http_response_code(405);
+    echo json_encode(["error" => "Método no permitido"], JSON_UNESCAPED_UNICODE);
+    exit();
+}
+
+require_once "conexion.php";
+require_once "servicios.php";
 
 // ============================================================================
 // POST: Registrar nueva mascota en adopción
