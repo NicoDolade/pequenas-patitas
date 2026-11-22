@@ -1,22 +1,18 @@
-// frontend/app.js — Controlador de la SPA de Pequeñas Patitas
-// Consume la API REST con fetch (async/await), maneja el estado de la UI y los marcadores de Leaflet.
-
-// Ruta relativa: funciona de manera idéntica tanto en XAMPP como desplegada en la nube
 const URL_API = "../api/mascotas.php";
 
-// ----- Inicialización del Mapa con Leaflet -----
-const mapa = L.map("mapa").setView([-38.4, -63.6], 5); // Centrado en la región pampeana / centro de Argentina
+// El catálogo se puede usar aunque no cargue Leaflet.
+let mapa;
+let capaMarcadores;
+if (typeof L !== "undefined") {
+  mapa = L.map("mapa").setView([-38.4, -63.6], 5);
+  L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> colaboradores'
+  }).addTo(mapa);
+  capaMarcadores = L.featureGroup().addTo(mapa);
+}
+let marcadores = {};
 
-// Capa de mapas OpenStreetMap HOT (gratuita, sin API key y compatible con desarrollo local y producción)
-L.tileLayer("https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png", {
-  maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> colaboradores'
-}).addTo(mapa);
-
-const capaMarcadores = L.featureGroup().addTo(mapa);
-let marcadores = {}; // Diccionario: id_mascota -> objeto L.marker
-
-// Función para mostrar mensajes de estado con estilos
 function mostrarMensaje(texto, tipo = "info") {
   const el = document.querySelector("#mensaje");
   if (!texto) {
@@ -28,9 +24,8 @@ function mostrarMensaje(texto, tipo = "info") {
   el.className = `mensaje activo ${tipo}`;
 }
 
-// Agrega un marcador en el mapa para una mascota con coordenadas válidas
 function agregarMarcador(mascota) {
-  if (mascota.latitud === null || mascota.longitud === null) return;
+  if (!capaMarcadores || mascota.latitud === null || mascota.longitud === null) return;
 
   const lat = Number(mascota.latitud);
   const lon = Number(mascota.longitud);
@@ -51,7 +46,6 @@ function agregarMarcador(mascota) {
   marcadores[mascota.id] = marcador;
 }
 
-// Función auxiliar para prevenir inyecciones HTML en el popup
 function escapeHTML(str) {
   if (!str) return "";
   return String(str)
@@ -62,7 +56,6 @@ function escapeHTML(str) {
     .replace(/'/g, "&#039;");
 }
 
-// Datos iniciales de demostración para vista previa sin conexión o modo local
 const MASCOTAS_PREVIA = [
   { id: 1, nombre: "Milo", contacto: "adopciones.tresarroyos@gmail.com", ciudad: "Tres Arroyos", latitud: -38.37583000, longitud: -60.27972000 },
   { id: 2, nombre: "Luna", contacto: "zoe.refugio@gmail.com", ciudad: "Bahía Blanca", latitud: -38.71959000, longitud: -62.27243000 },
@@ -70,7 +63,6 @@ const MASCOTAS_PREVIA = [
   { id: 4, nombre: "Bella", contacto: "contacto@patitas.org", ciudad: "Necochea", latitud: -38.54726000, longitud: -58.73675000 }
 ];
 
-// ----- Operación: Listar Mascotas (GET) -----
 async function listarMascotas() {
   try {
     const respuesta = await fetch(URL_API);
@@ -80,16 +72,15 @@ async function listarMascotas() {
     const mascotas = await respuesta.json();
     renderizarMascotas(mascotas);
   } catch (error) {
-    // Si la API remota o la base aún no están levantadas, cargamos datos de muestra para poder visualizar el diseño
-    renderizarMascotas(MASCOTAS_PREVIA);
-    mostrarMensaje("Modo vista previa — Mostrando 4 mascotas de ejemplo en el mapa interactivo", "info");
+    renderizarMascotas(MASCOTAS_PREVIA, true);
+    mostrarMensaje("No se pudo cargar el catálogo. Se muestran fichas de ejemplo.", "info");
   }
 }
 
-function renderizarMascotas(mascotas) {
+function renderizarMascotas(mascotas, vistaPrevia = false) {
   const cuerpoTabla = document.querySelector("#cuerpoTabla");
   cuerpoTabla.innerHTML = "";
-  capaMarcadores.clearLayers();
+  capaMarcadores?.clearLayers();
   marcadores = {};
 
   if (mascotas.length === 0) {
@@ -97,37 +88,36 @@ function renderizarMascotas(mascotas) {
     return;
   }
 
+  const acciones = vistaPrevia ? "" : `
+    <div class="acciones-celda">
+      <button class="btn-editar">Editar</button>
+      <button class="btn-borrar">Adoptado / Borrar</button>
+    </div>`;
+
   mascotas.forEach(function (mascota) {
     const fila = document.createElement("tr");
-    fila.dataset.id = mascota.id;
+    if (!vistaPrevia) fila.dataset.id = mascota.id;
 
     fila.innerHTML = `
       <td><strong>#${mascota.id}</strong></td>
       <td class="nombre-celda">${escapeHTML(mascota.nombre)}</td>
       <td class="contacto-celda">${escapeHTML(mascota.contacto)}</td>
       <td class="ciudad-celda">${mascota.ciudad ? escapeHTML(mascota.ciudad) : '<span style="color:#94a3b8;">—</span>'}</td>
-      <td>
-        <div class="acciones-celda">
-          <button class="btn-editar">Editar</button>
-          <button class="btn-borrar">Adoptado / Borrar</button>
-        </div>
-      </td>
+      <td>${acciones}</td>
     `;
 
     cuerpoTabla.appendChild(fila);
     agregarMarcador(mascota);
   });
 
-  // Encuadrar el mapa para enfocar todos los hogares registrados
-  if (capaMarcadores.getLayers().length > 0) {
+  if (capaMarcadores?.getLayers().length > 0) {
     mapa.fitBounds(capaMarcadores.getBounds(), { padding: [50, 50], maxZoom: 9 });
   }
 }
 
-// ----- Operación: Alta de Mascota (POST con Servicios Cloud) -----
 document.querySelector("#formAlta").addEventListener("submit", async function (evento) {
   evento.preventDefault();
-  mostrarMensaje("Guardando y geocodificando ubicación en la nube…", "info");
+  mostrarMensaje("Guardando mascota…", "info");
 
   const btn = document.querySelector("#btnGuardar");
   btn.disabled = true;
@@ -148,12 +138,11 @@ document.querySelector("#formAlta").addEventListener("submit", async function (e
     if (!respuesta.ok) {
       const errorJson = await respuesta.json();
       mostrarMensaje(`Error ${respuesta.status}: ${errorJson.error || "No se pudo procesar la solicitud"}`, "error");
-      btn.disabled = false;
       return;
     }
 
     const mascotaCreada = await respuesta.json();
-    mostrarMensaje(`¡${mascotaCreada.nombre} fue publicado/a con éxito en el catálogo!`, "exito");
+    mostrarMensaje(`Se publicó la ficha de ${mascotaCreada.nombre}.`, "exito");
     document.querySelector("#formAlta").reset();
     await listarMascotas();
 
@@ -167,16 +156,14 @@ document.querySelector("#formAlta").addEventListener("submit", async function (e
   }
 });
 
-// ----- Operaciones: Baja (DELETE) y Modificación (PUT) -----
 document.querySelector("#cuerpoTabla").addEventListener("click", async function (evento) {
   const fila = evento.target.closest("tr");
-  if (!fila) return;
+  if (!fila?.dataset.id) return;
   const id = fila.dataset.id;
   const nombreActual = fila.querySelector(".nombre-celda").textContent;
   const contactoActual = fila.querySelector(".contacto-celda").textContent;
   const ciudadActual = fila.querySelector(".ciudad-celda").textContent.replace("—", "").trim();
 
-  // Caso 1: Borrar (Adoptado)
   if (evento.target.classList.contains("btn-borrar")) {
     const confirma = confirm(`¿Confirmás que '${nombreActual}' ya fue adoptado/a o deseás retirar la publicación?`);
     if (!confirma) return;
@@ -194,13 +181,12 @@ document.querySelector("#cuerpoTabla").addEventListener("click", async function 
         capaMarcadores.removeLayer(marcadores[id]);
         delete marcadores[id];
       }
-      mostrarMensaje(`'${nombreActual}' fue retirado del catálogo. ¡Ojalá tenga un gran hogar!`, "info");
+      mostrarMensaje(`Se retiró la ficha de ${nombreActual}.`, "info");
     } catch (err) {
       mostrarMensaje(`Error al intentar borrar: ${err.message}`, "error");
     }
   }
 
-  // Caso 2: Editar datos
   if (evento.target.classList.contains("btn-editar")) {
     const nuevoNombre = prompt("Nombre de la mascota:", nombreActual);
     if (nuevoNombre === null) return;
@@ -208,7 +194,7 @@ document.querySelector("#cuerpoTabla").addEventListener("click", async function 
     const nuevoContacto = prompt("Email / Teléfono de contacto:", contactoActual);
     if (nuevoContacto === null) return;
 
-    const nuevaCiudad = prompt("Ciudad del hogar de tránsito (dejar en blanco para sin cambios):", ciudadActual);
+    const nuevaCiudad = prompt("Ciudad del hogar de tránsito (en blanco para quitar la ubicación):", ciudadActual);
     if (nuevaCiudad === null) return;
 
     mostrarMensaje("Actualizando datos...", "info");
@@ -238,5 +224,4 @@ document.querySelector("#cuerpoTabla").addEventListener("click", async function 
   }
 });
 
-// Carga inicial
 listarMascotas();

@@ -1,8 +1,5 @@
 <?php
-// api/mascotas.php — API REST para gestión de mascotas en adopción (Pequeñas Patitas)
-// Cumple con verbos HTTP estándar, códigos de estado REST y degradación elegante.
-
-// Orígenes permitidos para peticiones cruzadas (CORS) en desarrollo
+// Orígenes del frontend en desarrollo local.
 $origen = $_SERVER["HTTP_ORIGIN"] ?? "";
 $origenesPermitidos = [
     "http://127.0.0.1:5500",
@@ -23,7 +20,6 @@ header("Content-Type: application/json; charset=utf-8");
 header("Access-Control-Allow-Methods: $encabezadoMetodos");
 header("Access-Control-Allow-Headers: Content-Type");
 
-// Petición Preflight (CORS)
 if ($metodo === "OPTIONS") {
     http_response_code(200);
     exit();
@@ -39,14 +35,30 @@ if (!in_array($metodo, $metodosPermitidos, true)) {
 require_once "conexion.php";
 require_once "servicios.php";
 
-// ============================================================================
-// POST: Registrar nueva mascota en adopción
-// ============================================================================
-if ($metodo === "POST") {
-    $cuerpo = json_decode(file_get_contents("php://input"), true);
+function leerDatosMascota() {
+    $datos = json_decode(file_get_contents("php://input"));
+    if ($datos instanceof stdClass) {
+        foreach (["nombre", "contacto", "ciudad"] as $campo) {
+            if (isset($datos->$campo) && !is_string($datos->$campo)) {
+                http_response_code(400);
+                echo json_encode(["error" => "El campo '$campo' debe ser texto"]);
+                exit();
+            }
+        }
+        return (array) $datos;
+    }
 
-    // Validación 400: Campos obligatorios
-    if (empty(trim($cuerpo["nombre"] ?? "")) || empty(trim($cuerpo["contacto"] ?? ""))) {
+    http_response_code(400);
+    echo json_encode(["error" => "El cuerpo debe ser un objeto JSON"]);
+    exit();
+}
+
+if ($metodo === "POST") {
+    $cuerpo = leerDatosMascota();
+    $nombre = trim($cuerpo["nombre"] ?? "");
+    $contacto = trim($cuerpo["contacto"] ?? "");
+
+    if ($nombre === "" || $contacto === "") {
         http_response_code(400);
         echo json_encode(["error" => "Los campos 'nombre' y 'contacto' son obligatorios"]);
         exit();
@@ -56,11 +68,9 @@ if ($metodo === "POST") {
     $latitud = null;
     $longitud = null;
 
-    // Si se especificó una ciudad, se geocodifica con Open-Meteo
     if ($ciudad !== "") {
         $lugar = geocodificar($ciudad);
 
-        // Validación 422: Ciudad inexistente o no reconocida por el servicio
         if ($lugar["estado"] === "no_encontrada") {
             http_response_code(422);
             echo json_encode(["error" => "No se encontró la ciudad \"$ciudad\""], JSON_UNESCAPED_UNICODE);
@@ -71,17 +81,16 @@ if ($metodo === "POST") {
             $latitud = $lugar["latitud"];
             $longitud = $lugar["longitud"];
         }
-        // "sin_servicio": Degradación elegante: se continúa el alta sin coordenadas
+        // Si Open-Meteo no responde, dejamos las coordenadas vacías.
     }
 
-    // Consulta preparada para inserción segura contra SQL Injection
     $consulta = $conexion->prepare(
         "INSERT INTO mascotas (nombre, contacto, ciudad, latitud, longitud)
          VALUES (:nombre, :contacto, :ciudad, :latitud, :longitud)"
     );
     $consulta->execute([
-        ":nombre"   => trim($cuerpo["nombre"]),
-        ":contacto" => trim($cuerpo["contacto"]),
+        ":nombre"   => $nombre,
+        ":contacto" => $contacto,
         ":ciudad"   => $ciudad !== "" ? $ciudad : null,
         ":latitud"  => $latitud,
         ":longitud" => $longitud,
@@ -89,14 +98,14 @@ if ($metodo === "POST") {
 
     $nuevaMascota = [
         "id"       => (int) $conexion->lastInsertId(),
-        "nombre"   => trim($cuerpo["nombre"]),
-        "contacto" => trim($cuerpo["contacto"]),
+        "nombre"   => $nombre,
+        "contacto" => $contacto,
         "ciudad"   => $ciudad !== "" ? $ciudad : null,
         "latitud"  => $latitud,
         "longitud" => $longitud,
     ];
 
-    // Envío de aviso por email (si falla, la mascota ya fue persistida con éxito)
+    // La ficha queda guardada aunque falle el aviso.
     enviarAviso($nuevaMascota);
 
     http_response_code(201);
@@ -104,9 +113,6 @@ if ($metodo === "POST") {
     exit();
 }
 
-// ============================================================================
-// PUT: Modificar datos de una mascota existente
-// ============================================================================
 if ($metodo === "PUT") {
     if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
         http_response_code(400);
@@ -116,7 +122,6 @@ if ($metodo === "PUT") {
 
     $id = (int) $_GET["id"];
 
-    // Verificar si el recurso existe
     $consultaExiste = $conexion->prepare("SELECT * FROM mascotas WHERE id = :id");
     $consultaExiste->execute([":id" => $id]);
     $mascotaActual = $consultaExiste->fetch(PDO::FETCH_ASSOC);
@@ -127,7 +132,7 @@ if ($metodo === "PUT") {
         exit();
     }
 
-    $cuerpo = json_decode(file_get_contents("php://input"), true);
+    $cuerpo = leerDatosMascota();
 
     $nuevoNombre = trim($cuerpo["nombre"] ?? $mascotaActual["nombre"]);
     $nuevoContacto = trim($cuerpo["contacto"] ?? $mascotaActual["contacto"]);
@@ -142,7 +147,6 @@ if ($metodo === "PUT") {
     $latitud = $mascotaActual["latitud"];
     $longitud = $mascotaActual["longitud"];
 
-    // Si la ciudad cambió y no está vacía, se actualizan coordenadas
     if ($nuevaCiudad !== $mascotaActual["ciudad"]) {
         if ($nuevaCiudad !== "") {
             $lugar = geocodificar($nuevaCiudad);
@@ -188,9 +192,6 @@ if ($metodo === "PUT") {
     exit();
 }
 
-// ============================================================================
-// DELETE: Borrar mascota (cuando fue adoptada)
-// ============================================================================
 if ($metodo === "DELETE") {
     if (!isset($_GET["id"]) || !is_numeric($_GET["id"])) {
         http_response_code(400);
@@ -213,9 +214,6 @@ if ($metodo === "DELETE") {
     exit();
 }
 
-// ============================================================================
-// GET: Obtener una mascota por ID
-// ============================================================================
 if (isset($_GET["id"])) {
     if (!is_numeric($_GET["id"])) {
         http_response_code(400);
@@ -237,9 +235,6 @@ if (isset($_GET["id"])) {
     exit();
 }
 
-// ============================================================================
-// GET por defecto: Listado completo de mascotas en adopción
-// ============================================================================
 $consulta = $conexion->query("SELECT * FROM mascotas ORDER BY id DESC");
 $mascotas = $consulta->fetchAll(PDO::FETCH_ASSOC);
 echo json_encode($mascotas, JSON_UNESCAPED_UNICODE);

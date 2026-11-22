@@ -1,9 +1,7 @@
 <?php
-// api/conexion.php — Conexión segura mediante PDO usando constantes de config.php
-
 require_once "config.php";
 
-// En producción, display_errors se apaga para que los errores nunca se muestren en la respuesta HTTP
+// En producción, los errores de PHP van al log.
 if (ENTORNO === "produccion") {
     ini_set("display_errors", "0");
     ini_set("log_errors", "1");
@@ -17,7 +15,6 @@ try {
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
 } catch (PDOException $e) {
-    // El detalle del error va únicamente al log interno del servidor
     error_log("Conexión fallida a MySQL: " . $e->getMessage());
     http_response_code(500);
     header("Content-Type: application/json; charset=utf-8");
