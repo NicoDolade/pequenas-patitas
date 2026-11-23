@@ -26,4 +26,16 @@
     <string name="error_respuesta">La API devolvió una respuesta inesperada.</string>
     <string name="error_http">La API respondió con el código %1$d.</string>
     <string name="error_mensaje_api">La API respondió: %1$s</string>
+    <string name="ingreso_correo">Correo electrónico</string>
+    <string name="ingreso_clave">Contraseña</string>
+    <string name="ingresar">Ingresar</string>
+    <string name="salir">Cerrar sesión</string>
+    <string name="ingreso_espera">Ingresando…</string>
+    <string name="ingreso_correo_invalido">Ingresá un correo válido.</string>
+    <string name="ingreso_clave_requerida">Ingresá la contraseña.</string>
+    <string name="ingreso_credenciales_invalidas">El correo o la contraseña son incorrectos.</string>
+    <string name="ingreso_sin_red">No se pudo conectar con Firebase. Revisá tu conexión.</string>
+    <string name="ingreso_muchos_intentos">Hubo demasiados intentos. Esperá un momento y volvé a probar.</string>
+    <string name="ingreso_error">No se pudo iniciar sesión. Volvé a intentar.</string>
+    <string name="firebase_falta_configuracion">Falta configurar Firebase para iniciar sesión.</string>
 </resources>

@@ -9,7 +9,8 @@
         android:usesCleartextTraffic="false">
         <activity android:name=".ui.DetalleActivity" android:exported="false" />
         <activity android:name=".ui.AltaActivity" android:exported="false" />
-        <activity android:name=".ui.ListadoActivity" android:exported="true">
+        <activity android:name=".ui.ListadoActivity" android:exported="false" />
+        <activity android:name=".ui.IngresoActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import ar.edu.upso.pequenaspatitas.R;
 import ar.edu.upso.pequenaspatitas.modelo.Mascota;
+import com.google.firebase.auth.FirebaseAuth;
 import java.util.List;
 
 public final class ListadoActivity extends AppCompatActivity {
@@ -36,8 +37,19 @@ public final class ListadoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle estadoGuardado) {
         super.onCreate(estadoGuardado);
+        if (!Sesion.requerir(this)) {
+            return;
+        }
         setContentView(R.layout.activity_listado);
         Pantalla.respetarBarras(this);
+
+        FirebaseAuth auth = Sesion.autenticacion(this);
+        TextView cuenta = findViewById(R.id.cuenta);
+        cuenta.setText(auth.getCurrentUser().getEmail());
+        findViewById(R.id.salir).setOnClickListener(v -> {
+            auth.signOut();
+            Sesion.volverAlIngreso(this);
+        });
 
         modelo = new ViewModelProvider(this).get(MascotasViewModel.class);
         ListView lista = findViewById(R.id.mascotas);

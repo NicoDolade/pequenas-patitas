@@ -33,6 +33,9 @@ public final class AltaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle estadoGuardado) {
         super.onCreate(estadoGuardado);
+        if (!Sesion.requerir(this)) {
+            return;
+        }
         setContentView(R.layout.activity_alta);
         Pantalla.respetarBarras(this);
 
